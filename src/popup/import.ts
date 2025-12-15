@@ -216,8 +216,12 @@ class ImportController {
     }
 
     try {
+      // Disable button immediately and show loading status
       this.importBtn.disabled = true;
       this.showStatus("Importing sessions...", "loading");
+
+      // Small delay to ensure UI updates before heavy processing
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       // Get import mode from UI (currently only merge mode)
       const importMode = "merge";
@@ -239,14 +243,17 @@ class ImportController {
         throw new Error(response.error || "Import failed");
       }
 
+      // Show success status
       this.showStatus("Sessions imported successfully! You can close this tab.", "success");
 
-      // Update UI to show success
+      // Update UI to show success state
       setTimeout(() => {
         this.clearSelectedFile();
-      }, 2000);
+      }, 3000);
     } catch (error) {
-      this.showStatus(handleError(error, "handleImport"), "error");
+      // Show error status with clear message
+      const errorMessage = handleError(error, "handleImport");
+      this.showStatus(`❌ Import failed: ${errorMessage}`, "error");
       this.importBtn.disabled = false;
     }
   }
@@ -267,6 +274,7 @@ class ImportController {
     };
 
     this.statusMessage.className = `status-message show ${type}`;
+    this.statusMessage.style.display = "flex";
     this.statusMessage.innerHTML = `
       <div class="status-message-content">
         <span class="status-icon">${iconMap[type]}</span>
