@@ -140,7 +140,7 @@ class ImportController {
       // Display file info
       this.displayFileInfo(file);
       this.displaySessionsPreview(importData.sessions);
-      this.showStatus("File loaded successfully!", "success");
+      // Status message removed as requested - file loading is implied by preview
     } catch (error) {
       throw new Error(`Failed to process file: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
