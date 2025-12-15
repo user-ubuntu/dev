@@ -38,12 +38,13 @@ export interface ExportSessionsMessage extends BaseMessage {
 
 export interface ImportSessionsMessage extends BaseMessage {
   action: "importSessions";
-  data: string;
+  jsonData: string;
+  importMode?: string;
 }
 
-export type MessageType = 
-  | GetCurrentSessionMessage 
-  | SwitchSessionMessage 
+export type MessageType =
+  | GetCurrentSessionMessage
+  | SwitchSessionMessage
   | ClearSessionMessage
   // GetCurrentDomainMessage removed - now using URL parameters
   | ClearSessionsMessage

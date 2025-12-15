@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Import Sessions - Session Switcher</title>
+    <link rel="stylesheet" href="import.css" />
+  </head>
+  <body>
+    <div class="import-container">
+      <header class="import-header">
+        <h1><span class="icon">📥</span> Import Sessions</h1>
+        <p class="subtitle">Import your saved sessions from a JSON file</p>
+      </header>
+
+      <main class="import-main">
+        <div class="upload-area" id="uploadArea">
+          <div class="upload-icon">📁</div>
+          <h3>Drag & Drop JSON File</h3>
+          <p>or click to browse</p>
+          <input type="file" id="jsonFileInput" accept=".json" hidden />
+          <p class="file-types">Supported: .json files exported from Session Switcher</p>
+        </div>
+
+        <div class="file-info" id="fileInfo" style="display: none">
+          <div class="file-header">
+            <span class="file-icon">📄</span>
+            <div class="file-details">
+              <h4 id="fileName">file.json</h4>
+              <p id="fileSize">0 KB</p>
+            </div>
+            <button class="clear-btn" id="clearFileBtn">✕</button>
+          </div>
+
+          <div class="session-preview" id="sessionPreview">
+            <h4>Sessions in file:</h4>
+            <div class="sessions-list" id="previewSessionsList">
+              <!-- Sessions will be dynamically added here -->
+            </div>
+          </div>
+        </div>
+
+        <div class="file-ready-message" id="fileReadyMessage" style="display: none">
+          <div class="ready-icon">✅</div>
+          <div class="ready-text">
+            <h4>File ready for import</h4>
+            <p>Your sessions are ready to be imported</p>
+          </div>
+        </div>
+
+        <div class="import-options">
+          <h4>Import Options</h4>
+          <div class="option-group">
+            <label class="option">
+              <input type="radio" name="importMode" value="merge" checked />
+              <span class="option-label">Merge with existing sessions</span>
+              <span class="option-description">Keep existing sessions and add new ones</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn secondary" id="backBtn">← Back to Extension</button>
+          <button class="btn primary" id="importBtn" disabled>Import Sessions</button>
+        </div>
+
+        <div class="status-message" id="statusMessage" style="display: none"></div>
+      </main>
+
+      <footer class="import-footer">
+        <p>Session Switcher • All data is stored locally</p>
+      </footer>
+    </div>
+
+    <script src="import.js"></script>
+  </body>
+</html>

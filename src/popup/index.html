@@ -12,7 +12,7 @@
         <div class="header-content">
           <div class="header-actions">
             <div id="currentSiteContainer" class="current-site-container">
-              Session Switcher <br>
+              Session Switcher <br />
               <div class="current-site" id="currentSite">Loading...</div>
             </div>
             <div class="header-controls">
@@ -21,21 +21,11 @@
                 <span class="btn-icon">⋮</span>
               </button>
               <div id="menuDropdown" class="menu-dropdown">
-                <button id="saveBtn" class="dropdown-item">
-                  Save Current Session
-                </button>
-                <button id="newSessionBtn" class="dropdown-item">
-                  New Session
-                </button>
-                <button id="clearSessionBtn" class="dropdown-item">
-                  Clear Session
-                </button>
-                <button id="exportImportBtn" class="dropdown-item">
-                  Export/Import
-                </button>
-                <button id="aboutBtn" class="dropdown-item">
-                  About
-                </button>
+                <button id="saveBtn" class="dropdown-item">Save Current Session</button>
+                <button id="newSessionBtn" class="dropdown-item">New Session</button>
+                <button id="clearSessionBtn" class="dropdown-item">Clear Session</button>
+                <button id="exportImportBtn" class="dropdown-item">Export/Import</button>
+                <button id="aboutBtn" class="dropdown-item">About</button>
               </div>
             </div>
           </div>
@@ -124,7 +114,7 @@
         </div>
       </div>
     </div>
-    
+
     <div id="aboutModal" class="modal">
       <div class="modal-content">
         <div class="modal-header">
@@ -132,17 +122,23 @@
           <button id="closeAboutModal" class="close-btn">&times;</button>
         </div>
         <div class="modal-body">
-          <p>Session Switcher helps you manage multiple accounts/sessions on the same website by letting you save and switch between them easily.</p>
-          <br>
+          <p>
+            Session Switcher helps you manage multiple accounts/sessions on the same website by letting you save and
+            switch between them easily.
+          </p>
+          <br />
           <p>All the data is localy stored and is not shared with any server.</p>
-          <p>You can check the full source code on <a href="https://github.com/kuronekony4n/session-switcher" target="_blank">Github</a>.</p>
+          <p>
+            You can check the full source code on
+            <a href="https://github.com/kuronekony4n/session-switcher" target="_blank">Github</a>.
+          </p>
         </div>
         <div class="modal-footer">
           <button id="closeAboutModalBtn" class="btn btn-primary">Close</button>
         </div>
       </div>
     </div>
-    
+
     <div id="newSessionConfirmModal" class="modal">
       <div class="modal-content">
         <div class="modal-header">
@@ -194,6 +190,7 @@
             <div class="tab-buttons">
               <button id="exportTabBtn" class="tab-btn active">Export</button>
               <button id="importTabBtn" class="tab-btn">Import</button>
+              <button id="importNewTabBtn" class="tab-btn">Import In New Tab</button>
             </div>
             <div class="tab-content">
               <div id="exportTab" class="tab-pane active">
@@ -208,11 +205,18 @@
                   <button id="exportBtn" class="btn btn-primary">Export</button>
                 </div>
               </div>
+
               <div id="importTab" class="tab-pane">
                 <div class="import-section">
                   <p>Select a JSON file to import sessions:</p>
-                  <input type="file" id="importFileInput" accept=".json">
+                  <input type="file" id="importFileInput" accept=".json" />
                   <button id="importBtn" class="btn btn-primary" disabled>Import</button>
+                </div>
+              </div>
+              <div id="importNewTab" class="tab-pane">
+                <div class="importnewtab-section">
+                  <p>Import sessions in a new tab for better file handling:</p>
+                  <button id="openImportNewTabBtn" class="btn btn-primary">Open Import In New Tab</button>
                 </div>
               </div>
             </div>
@@ -223,7 +227,7 @@
         </div>
       </div>
     </div>
-    
+
     <div id="replaceConfirmModal" class="modal">
       <div class="modal-content">
         <div class="modal-header">
@@ -231,7 +235,10 @@
           <button id="closeReplaceConfirmModal" class="close-btn">&times;</button>
         </div>
         <div class="modal-body">
-          <p>Replace this session data of "<strong id="replaceSessionName"></strong>" with the one currently open in the browser?</p>
+          <p>
+            Replace this session data of "<strong id="replaceSessionName"></strong>" with the one currently open in the
+            browser?
+          </p>
           <p class="warning-text">This will overwrite the saved session data.</p>
         </div>
         <div class="modal-footer">

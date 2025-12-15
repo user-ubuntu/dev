@@ -69,17 +69,17 @@ export class MessageService {
       case MESSAGE_ACTIONS.CLEAR_SESSION:
         await this.handleClearSession(message, sendResponse);
         break;
-        
+
       // GET_CURRENT_DOMAIN handler removed - now using URL parameters
-        
+
       case MESSAGE_ACTIONS.CLEAR_SESSIONS:
         await this.handleClearSessions(message, sendResponse);
         break;
-        
+
       case MESSAGE_ACTIONS.EXPORT_SESSIONS:
         await this.handleExportSessions(message, sendResponse);
         break;
-        
+
       case MESSAGE_ACTIONS.IMPORT_SESSIONS:
         await this.handleImportSessions(message, sendResponse);
         break;
@@ -112,25 +112,25 @@ export class MessageService {
     await this.sessionHandler.clearSession(message.domain, message.tabId);
     sendResponse({ success: true });
   }
-  
+
   // handleGetCurrentDomain method removed - now using URL parameters
-  
+
   private async handleClearSessions(
     message: Extract<MessageType, { action: "clearSessions" }>,
     sendResponse: SendResponseType
   ): Promise<void> {
     try {
       const { clearOption, domain } = message;
-      
+
       if (clearOption === "current") {
         // Clear sessions for current domain only
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
         if (tab && tab.id) {
           await this.sessionHandler.clearSession(domain, tab.id);
-          
+
           // Also remove from storage
           const sessions = await this.getStoredSessions();
-          const updatedSessions = sessions.filter(s => s.domain !== domain);
+          const updatedSessions = sessions.filter((s) => s.domain !== domain);
           await this.saveStoredSessions(updatedSessions);
         }
       } else if (clearOption === "all") {
@@ -138,13 +138,13 @@ export class MessageService {
         await this.saveStoredSessions([]);
         await this.saveActiveSessionsMap({});
       }
-      
+
       sendResponse({ success: true });
     } catch (error) {
       sendResponse({ success: false, error: String(error) });
     }
   }
-  
+
   private async handleExportSessions(
     message: Extract<MessageType, { action: "exportSessions" }>,
     sendResponse: SendResponseType<string>
@@ -152,80 +152,80 @@ export class MessageService {
     try {
       const { exportOption, domain } = message;
       const sessions = await this.getStoredSessions();
-      
+
       let sessionsToExport = sessions;
       if (exportOption === "current") {
-        sessionsToExport = sessions.filter(s => s.domain === domain);
+        sessionsToExport = sessions.filter((s) => s.domain === domain);
       }
-      
+
       const exportData = {
         version: "1.0",
         exportDate: new Date().toISOString(),
-        sessions: sessionsToExport
+        sessions: sessionsToExport,
       };
-      
+
       sendResponse({ success: true, data: JSON.stringify(exportData, null, 2) });
     } catch (error) {
       sendResponse({ success: false, error: String(error) });
     }
   }
-  
+
   private async handleImportSessions(
     message: Extract<MessageType, { action: "importSessions" }>,
     sendResponse: SendResponseType
   ): Promise<void> {
     try {
-      const { data } = message;
+      const { jsonData } = message;
       let importData;
-      
+
       try {
-        importData = JSON.parse(data);
+        importData = JSON.parse(jsonData);
       } catch (e) {
         sendResponse({ success: false, error: "Invalid JSON format" });
         return;
       }
-      
+
       // Validate import data structure
       if (!importData || !importData.sessions || !Array.isArray(importData.sessions)) {
         sendResponse({ success: false, error: "Invalid import data format" });
         return;
       }
-      
+
       const currentSessions = await this.getStoredSessions();
       const importedSessions = importData.sessions;
-      
+
       // Generate new IDs for imported sessions to avoid conflicts
       const sessionsWithNewIds = importedSessions.map((session: any) => ({
         ...session,
-        id: crypto.randomUUID()
+        id: crypto.randomUUID(),
       }));
-      
+
       // Merge with existing sessions
       const mergedSessions = [...currentSessions, ...sessionsWithNewIds];
-      
+
       // Save merged sessions
       await this.saveStoredSessions(mergedSessions);
-      
+
       sendResponse({ success: true });
     } catch (error) {
       sendResponse({ success: false, error: String(error) });
     }
   }
-  
+
   private async getStoredSessions(): Promise<any[]> {
     const result = await chrome.storage.local.get(STORAGE_KEYS.SESSIONS);
     return result[STORAGE_KEYS.SESSIONS] || [];
   }
-  
+
   private async saveStoredSessions(sessions: any[]): Promise<void> {
     await chrome.storage.local.set({ [STORAGE_KEYS.SESSIONS]: sessions });
   }
-  
+
   private async getActiveSessionsMap(): Promise<Record<string, string>> {
     const result = await chrome.storage.local.get(STORAGE_KEYS.ACTIVE_SESSIONS);
     return result[STORAGE_KEYS.ACTIVE_SESSIONS] || {};
   }
-  
+
   private async saveActiveSessionsMap(activeSessions: Record<string, string>): Promise<void> {
     await chrome.storage.local.set({ [STORAGE_KEYS.ACTIVE_SESSIONS]: activeSessions });
   }

@@ -51,14 +51,14 @@ class PopupController {
       });
 
       this.currentSiteElement.textContent = this.state.currentDomain;
-      
+
       // Apply saved view mode
-      if (this.state.viewMode === 'grid') {
+      if (this.state.viewMode === "grid") {
         this.switchToGridView(false);
       } else {
         this.switchToListView(false);
       }
-      
+
       this.renderSessionsList();
     } catch (error) {
       this.showError(handleError(error, "PopupController.initialize"));
@@ -77,7 +77,7 @@ class PopupController {
     this.viewModeBtn.addEventListener("click", () => this.toggleViewMode());
     this.menuBtn.addEventListener("click", () => this.toggleMenu());
     this.aboutBtn.addEventListener("click", () => this.handleAboutClick());
-    
+
     // Close menu when clicking outside
     document.addEventListener("click", (e) => {
       if (!this.menuBtn.contains(e.target as Node) && !this.menuDropdown.contains(e.target as Node)) {
@@ -95,6 +95,7 @@ class PopupController {
     getElementByIdSafe("confirmClearSession").addEventListener("click", () => this.handleConfirmClearSession());
     getElementByIdSafe("exportBtn").addEventListener("click", () => this.handleExport());
     getElementByIdSafe("importBtn").addEventListener("click", () => this.handleImport());
+    getElementByIdSafe("openImportNewTabBtn").addEventListener("click", () => this.handleOpenImportNewTab());
   }
 
   private setupSessionListHandlers(): void {
@@ -107,7 +108,7 @@ class PopupController {
 
   private async handleSaveClick(): Promise<void> {
     const sessions = this.popupService.getState().sessions;
-    const nextOrder = sessions.length > 0 ? Math.max(...sessions.map(s => s.order || 0)) + 1 : 1;
+    const nextOrder = sessions.length > 0 ? Math.max(...sessions.map((s) => s.order || 0)) + 1 : 1;
     this.modalManager.showSaveModal("", nextOrder);
   }
 
@@ -178,33 +179,33 @@ class PopupController {
 
   private handleReplaceSessionClick(): Promise<void> {
     try {
-        const sessionId = this.popupService.getState().currentRenameSessionId;
-        if (sessionId) {
-            const session = this.popupService.getSession(sessionId);
-            if (session) {
-                this.modalManager.showReplaceConfirmModal(session.name);
-            }
+      const sessionId = this.popupService.getState().currentRenameSessionId;
+      if (sessionId) {
+        const session = this.popupService.getSession(sessionId);
+        if (session) {
+          this.modalManager.showReplaceConfirmModal(session.name);
         }
-        return Promise.resolve();
+      }
+      return Promise.resolve();
     } catch (error) {
-        this.showError(handleError(error, "prepare replace session"));
-        return Promise.resolve();
+      this.showError(handleError(error, "prepare replace session"));
+      return Promise.resolve();
     }
   }
 
   private async handleReplaceSession(): Promise<void> {
     try {
-        const sessionId = this.popupService.getState().currentRenameSessionId;
-        if (sessionId) {
-            await this.loadingManager.withLoading(async () => {
-                await this.popupService.replaceSession(sessionId);
-            });
-            this.renderSessionsList();
-        }
-        this.modalManager.hideReplaceConfirmModal();
-        this.modalManager.hideRenameModal();
+      const sessionId = this.popupService.getState().currentRenameSessionId;
+      if (sessionId) {
+        await this.loadingManager.withLoading(async () => {
+          await this.popupService.replaceSession(sessionId);
+        });
+        this.renderSessionsList();
+      }
+      this.modalManager.hideReplaceConfirmModal();
+      this.modalManager.hideRenameModal();
     } catch (error) {
-        this.showError(handleError(error, "replace session"));
+      this.showError(handleError(error, "replace session"));
     }
   }
 
@@ -234,11 +235,11 @@ class PopupController {
   private switchToListView(savePreference: boolean = true): void {
     this.sessionsListElement.classList.remove("grid-view");
     this.viewModeBtn.textContent = "Grid";
-    
+
     if (savePreference) {
-      this.popupService.setViewMode('list');
+      this.popupService.setViewMode("list");
     }
-    
+
     this.renderSessionsList();
   }
 
@@ -246,14 +247,14 @@ class PopupController {
     this.sessionsListElement.classList.add("grid-view");
 
     this.viewModeBtn.textContent = "List";
-    
+
     if (savePreference) {
-      this.popupService.setViewMode('grid');
+      this.popupService.setViewMode("grid");
     }
-    
+
     this.renderSessionsList();
   }
-  
+
   private toggleViewMode(): void {
     const isGridView = this.sessionsListElement.classList.contains("grid-view");
     if (isGridView) {
@@ -262,16 +263,16 @@ class PopupController {
       this.switchToGridView();
     }
   }
-  
+
   private toggleMenu(): void {
     this.menuDropdown.classList.toggle("show");
   }
-  
+
   private handleAboutClick(): void {
     this.modalManager.showAboutModal();
     this.menuDropdown.classList.remove("show");
   }
-  
+
   private handleNewSessionConfirmClick(): void {
     this.modalManager.showNewSessionConfirmModal();
     this.menuDropdown.classList.remove("show");
@@ -297,7 +298,7 @@ class PopupController {
   private async handleConfirmClearSession(): Promise<void> {
     try {
       const clearOption = this.modalManager.getClearSessionOption();
-      
+
       await this.loadingManager.withLoading(async () => {
         await this.popupService.clearSessions(clearOption);
       });
@@ -319,18 +320,18 @@ class PopupController {
     try {
       const exportOption = this.modalManager.getExportOption();
       const jsonData = this.popupService.exportSessions(exportOption);
-      
+
       // Create a blob and download link
-      const blob = new Blob([jsonData], { type: 'application/json' });
+      const blob = new Blob([jsonData], { type: "application/json" });
       const url = URL.createObjectURL(blob);
-      
+
       // Create a temporary link element and trigger download
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = `session-switcher-export-${new Date().toISOString().slice(0, 10)}.json`;
       document.body.appendChild(a);
       a.click();
-      
+
       // Clean up
       setTimeout(() => {
         document.body.removeChild(a);
@@ -348,31 +349,48 @@ class PopupController {
         this.showError("No file selected");
         return;
       }
-      
+
       // Read the file
       const reader = new FileReader();
       reader.onload = async (e) => {
         try {
           const jsonData = e.target?.result as string;
-          
+
           await this.loadingManager.withLoading(async () => {
             await this.popupService.importSessions(jsonData);
           });
-          
+
           this.modalManager.hideExportImportModal();
           this.renderSessionsList();
         } catch (error) {
           this.showError(handleError(error, "import sessions"));
         }
       };
-      
+
       reader.onerror = () => {
         this.showError("Error reading file");
       };
-      
+
       reader.readAsText(file);
     } catch (error) {
       this.showError(handleError(error, "import sessions"));
+    }
+  }
+
+  private handleOpenImportNewTab(): void {
+    try {
+      // Get the extension URL for the import page
+      const importUrl = chrome.runtime.getURL("popup/import.html");
+
+      // Open the import page in a new tab
+      chrome.tabs.create({
+        url: importUrl,
+      });
+
+      // Close the modal
+      this.modalManager.hideExportImportModal();
+    } catch (error) {
+      this.showError(handleError(error, "open import new tab"));
     }
   }
 }
